@@ -48,8 +48,6 @@ import { httpResource } from '@angular/common/http';
 })
 export class PokeComponent {
   name = signal('pikachu');
-
-  // httpResource tự lo status + value dưới dạng signals
   pokemon = httpResource(() => ({
     url: `https://pokeapi.co/api/v2/pokemon/${this.name()}`,
     method: 'GET',

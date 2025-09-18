@@ -42,15 +42,9 @@ type Post = { userId: number; id: number; title: string; body: string };
   `]
 })
 export class HomeComponent {
-  // signal điều khiển tham số
   userId = signal<number>(1);
-
-  // Resource với request & loader
   postsRes = resource({
-    // request là một hàm tạo "payload" dựa trên signals đầu vào
     request: () => ({ uid: this.userId() }),
-    // loader thực thi async fetch dựa trên request + abortSignal
-    // (abortSignal giúp tự cancel khi tham số đổi)
     loader: async ({ request, abortSignal }): Promise<Post[]> => {
       const res = await fetch(
         `https://jsonplaceholder.typicode.com/posts?userId=${request.uid}`,
@@ -61,15 +55,12 @@ export class HomeComponent {
     }
   });
 
-  // computed lấy value từ resource
   posts = computed(() => this.postsRes.value() ?? []);
 
-  // Reload thủ công (ngoài auto-trigger khi userId thay đổi)
   reloadPosts() {
     this.postsRes.reload();
   }
 
-  // optional: effect log
   _log = effect(() => {
     if (this.postsRes.status() === 2) return;
     console.log('Status:', this.postsRes.status(), 'Count:', this.posts().length);
